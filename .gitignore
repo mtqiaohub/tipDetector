@@ -1,3 +1,7 @@
 __pycache__/
 .DS_Store
 deck.jpg
+runs/
+old/
+camera.py
+rack_occupancy_from_screenshot.csv
