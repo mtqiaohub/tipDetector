@@ -1,0 +1,8 @@
+names:
+- rack
+- tip
+nc: 2
+path: /Users/markqiao/Downloads/KirkLab/tipDetector
+test: data/images/test
+train: data/images/train
+val: data/images/val
