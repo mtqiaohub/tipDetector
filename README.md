@@ -72,3 +72,32 @@ tipDetector/
 - `inference.py` - Inference and testing script
 - `config.py` - Configuration parameters
 - `requirements.txt` - Python dependencies
+
+
+## Auto-labeling for Label Studio
+
+### Step 1: Generate YOLO labels (without drawing on images)
+```bash
+python auto_label.py --model runs/detect/tip_detection5/weights/best.pt --images new_training --conf 0.25
+```
+
+This creates `auto_labels/runX/` with:
+- `images/` → symlink to original images (no annotations drawn)
+- `labels/` → YOLO format predictions
+- `classes.txt` → class names
+
+### Step 2: Convert to Label Studio format
+```bash
+cd auto_labels/run1  # or whatever run number was created
+label-studio-converter import yolo -i . -o labelstudio_json/output.json --out-type predictions --image-root-url '' --image-ext .jpeg
+```
+
+### Step 3: Fix image paths
+```bash
+python3 -c "import json; data = json.load(open('labelstudio_json/output.json')); [task.update({'data': {'image': task['data']['image'].lstrip('/')}}) for task in data]; json.dump(data, open('labelstudio_json/output.json', 'w'), indent=2)"
+```
+
+### Step 4: Import to Label Studio
+1. Set local storage to absolute path: `/Users/markqiao/Downloads/KirkLab/tipDetector/auto_labels/run1/images`
+2. Import `labelstudio_json/output.json`
+3. Predictions will be editable!
