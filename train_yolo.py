@@ -21,7 +21,7 @@ def train_tip_detector():
     
     # Training parameters
     training_args = {
-        'data': 'dataset.yaml',
+        'data': 'data_v2/dataset.yaml',
         'epochs': 100,  # Start with 100 epochs
         'imgsz': 640,   # Image size
         'batch': 16,    # Batch size (adjust based on your GPU memory)

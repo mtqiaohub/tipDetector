@@ -127,3 +127,4 @@ if __name__ == "__main__":
     
     auto_label(args.model, args.images, args.output, args.conf)
 
+

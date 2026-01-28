@@ -5,3 +5,7 @@ runs/
 old/
 camera.py
 rack_occupancy_from_screenshot.csv
+*.jpeg
+*.txt
+auto_labels/
+data_v2/
