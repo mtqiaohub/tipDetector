@@ -485,8 +485,6 @@ if __name__ == "__main__":
     parser.add_argument('image_path', nargs='?', help='Path to image file or directory')
     parser.add_argument('--conf', '--confidence', type=float, default=0.1, 
                        help='Confidence threshold for detections (default: 0.1)')
-    parser.add_argument('--interactive', action='store_true', 
-                       help='Run in interactive mode to select images')
     parser.add_argument('--live', action='store_true', help='Run live webcam inference')
 
     args = parser.parse_args()
@@ -501,13 +499,6 @@ if __name__ == "__main__":
         sys.exit(1)
     if args.live:
         run_live_inference(model_path, conf_threshold=args.conf)
-    elif args.interactive or (not args.image_path):
-        # Interactive image selection for testing
-        print("=== Interactive Image Selection for Testing ===")
-        print("This will let you manually select which images to test.")
-        print("You can choose specific images or test all images.")
-        print()
-        # interactive_image_selection()
     else:
         # Run inference on specific image with specified confidence threshold
         print(f"Running inference on: {args.image_path}")
