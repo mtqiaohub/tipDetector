@@ -1,23 +1,25 @@
 import requests
 import tempfile
 import os
+import yaml
 
-ROBOT_IP = "10.70.18.217"
-HEADERS = {"opentrons-version": "3"}
+with open('http_config.yaml', 'r') as file:
+    configuration = yaml.safe_load(file)
 
-#a57c644a-ce8a-4e99-ae23-98211362e7d6
-#protocol id for testing http_api
+ROBOT_IP = configuration['ROBOT_IP']
+HEADERS = {"opentrons-version": configuration['VERSION']}
 
-protocol_id = "6f2eb7d3-3dd0-43de-95a8-7dea0846bf6e"
-csv_contents = """well,has_tip
-A1,1
-A2,0
-A3,1
-B1,0
-"""
-with tempfile.NamedTemporaryFile(delete=False, suffix=".csv", mode="w") as f:
-    f.write(csv_contents)
-    csv_path = f.name
+protocol_id = configuration["PROTOCOL_ID"]
+
+# csv_contents = """well,has_tip
+# A1,1
+# A2,0
+# A3,1
+# B1,0
+# """
+# with tempfile.NamedTemporaryFile(delete=False, suffix=".csv", mode="w") as f:
+#     f.write(csv_contents)
+#     csv_path = f.name
 
 def create_run(protocol_id):
 
@@ -51,7 +53,7 @@ def create_run(protocol_id):
     print("Created run_id:", run_id)
 
 
-def execute_run(data_file_id):
+def execute_run(run_id):
     r = requests.post(
         f"http://{ROBOT_IP}:31950/runs/{run_id}/actions",
         headers=HEADERS,
@@ -61,4 +63,4 @@ def execute_run(data_file_id):
 
     print("Run started")
 
-os.unlink(csv_path)
+# os.unlink(csv_path)

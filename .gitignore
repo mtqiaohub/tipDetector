@@ -9,3 +9,4 @@ rack_occupancy_from_screenshot.csv
 *.txt
 auto_labels/
 data_v2/
+http_config.yaml
