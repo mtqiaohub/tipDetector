@@ -2,7 +2,8 @@
 """
 Inference script for tip detection using trained YOLOv8 model.
 """
-
+import csv
+import io
 import cv2
 import numpy as np
 from ultralytics import YOLO
@@ -312,6 +313,28 @@ def calculate_hamming_dist(occupancy):
     return hamming_dist, target_reshaped
 
 
+def tiprack_state_to_csv(occupancy):
+    """
+    Build a 96-row CSV of the tiprack state: one row per well, two columns (well, filled).
+
+    occupancy: np.ndarray of shape (8, 12), dtype bool. occupancy[row, col] True = tip present.
+    Order: A1–A12, B1–B12, … H12 (top to bottom).
+    """
+    rows, cols = 8, 12
+    if occupancy.shape != (rows, cols):
+        raise ValueError(f"occupancy must be shape (8, 12), got {occupancy.shape}")
+
+    buf = io.StringIO()
+    w = csv.writer(buf)
+    w.writerow(["well", "filled"])
+    row_labels = "ABCDEFGH"
+    for r in range(rows):
+        for c in range(cols):
+            well = f"{row_labels[r]}{c + 1}"
+            filled = 1 if occupancy[r, c] else 0
+            w.writerow([well, filled])
+    return buf.getvalue()
+
 def list_transfers(source, target):
     # Identify source-only and target-only coordinates
     source_only = source & ~target
@@ -421,6 +444,7 @@ def visualize_detections(image, model_path=None, model=None, conf_threshold=0.1,
     print("hamming dist:", hamming_dist)
     print("transfers:", transfers)
 
+    print(tiprack_state_to_csv(occupancy))
     # --- 4-panel visualization (same plotting code as before) ---
     visualize_grid_panels(img_rgb, occupancy, target, transfers, conf_threshold, annotated_rgb)
     return occupancy
@@ -511,6 +535,7 @@ if __name__ == "__main__":
                 model_path=model_path,
                 conf_threshold=args.conf
             )
+            
         else:
             # Directory of images
             run_inference(model_path, args.image_path, args.conf, save_results=True)
